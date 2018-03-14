@@ -1,0 +1,216 @@
+<!-- 
+Copyright 2018 General Electric
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!-- saved from url=(0014)about:internet -->
+<HTML>
+	<HEAD>
+		<TITLE>AW Test Plug-In</TITLE>
+		<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		
+		<!--SCRIPT src="iSiteConfig.js" ></SCRIPT-->
+		<SCRIPT language="javascript" src="AWPrefs.js"></SCRIPT>
+		<SCRIPT language="javascript">
+		
+		
+		var bInitialized = 0;
+		var awRunning = false;
+		var vMenu = "Start AW";
+		var eMenu = "Start AW";
+		var iSite;
+		var PREFS_FILE = "awprefs.htm";
+		var PREFS_NAME = "AW Preferences";
+		
+		//Create an error handler to assist in debugging.
+		function HandleError(msg, url, lno)
+		{
+			var errMsg = 	"Error Occurred.\n" +
+										"Error: " + msg +
+										"URL: " + URL +
+										"Line: " + lno;
+			alert(errMsg);
+			return;
+		}
+		
+		function Init()
+		{			
+			 if (typeof(iSiteEnterprise) == "object") 
+			 {
+				iSite = iSiteEnterprise;
+			 } 
+			 else if (typeof(Radiology) == "object") 
+			 {
+				iSite = Radiology;
+			 } 
+			 else 
+			 {
+				iSite = NotDefined;
+			 }
+		}
+				
+		function callCtrl(vStudyUID, vSeriesUID)
+		{
+			GetPreferences();	
+		
+			// Philips DICOM
+			ACCMDTest1.InputParameter = soloPath + 
+			" -apiVersion=" + apiVersion + " -awServerIP=" + awServerIp + " -user=" + user + " -secure=" + secure + 
+			" -selectedStudy=" + vStudyUID + " -selectedSeries=" + 
+			vSeriesUID + " -uniqueID=1" + " -loginlaunch";
+			
+			// Test DICOM
+			//ACCMDTest1.InputParameter = soloPath + 
+			//" -apiVersion=" + apiVersion + " -awServerIP=" + awServerIp + " -user=" + user + " -secure=" + secure + 
+			//" -selectedStudy=" + "1.2.840.113619.2.248.90580923803.8632.1211555749674.2" + " -selectedSeries=" + 
+			//"1.2.840.113619.2.248.90580923803.8632.1211555749674.3" + " -uniqueID=1" + " -loginlaunch";
+			
+			ACCMDTest1.LoadParameter();
+			awRunning = true;
+		}
+
+		function OnLoad()
+		{
+			// Init 
+			Init();
+			
+			// Add menu items
+			iSite.AddViewMenuItem(vMenu);
+			iSite.AddExamMenuItem(eMenu);
+			
+			AddPrefPage();
+		}
+		
+		function unLoad() 
+		{
+			iSite.RemoveViewMenuItem(vMenu);
+			iSite.RemoveExamMenuItem(eMenu);
+			iSite.AddPreferencePage(PREFS_NAME, "", "Machine");
+		}
+		
+		function AddPrefPage()
+		{			
+			// use the prefs file located in this same location
+			var thispath = document.location.toString();
+			thispath = thispath.toLowerCase();
+			var locate = thispath.indexOf("awtest.html");
+			if (locate > -1)
+			{
+			  var path = thispath.substring(0, locate);
+			  var prefpath = path + PREFS_FILE;
+			  iSite.AddPreferencePage(PREFS_NAME, prefpath, "Machine");
+			}
+			else
+			{
+				window.alert("Pref error");
+			}
+		}
+		
+		// This function is called by the javascript that traps the event for the 
+		// image view menu item selection.
+		function OnViewEvent(menuitem, ContextRecord)
+		{
+			if (menuitem == eMenu || menuitem == vMenu) 
+			{
+				if (ContextRecord != "")
+				{
+					var doc = xmldso.XMLDocument;
+					doc.loadXML(ContextRecord);
+
+					var nodeList = doc.getElementsByTagName("WindowInfo");
+					var WndID    = nodeList.item(0).selectSingleNode("WindowID").text;
+			
+					var WndInfo = iSite.GetStaticWindowInfo(WndID);
+
+					if (WndInfo != "")
+					{
+						doc = xmldso.XMLDocument;
+						doc.loadXML(WndInfo);
+						var nodeList = doc.getElementsByTagName("Window");
+						var vStudyUID = nodeList.item(0).getElementsByTagName("StudyUID").item(0).text;
+						var vSeriesUID = nodeList.item(0).getElementsByTagName("SeriesUID").item(0).text;
+						
+						callCtrl(vStudyUID, vSeriesUID);
+					}
+				
+				}
+			}
+		}
+		
+		function iSiteEnterprise_EventViewMenuSelected(menuitem, contextRecord)
+		{
+			iSite_EventViewMenuSelected(menuitem, contextRecord);
+		}
+		
+		function iSiteEnterprise_EventExamMenuSelected(menuitem, examKey)
+		{
+			iSite_EventExamMenuSelected(menuitem, examKey);
+		}
+		
+		function Radiology_EventViewMenuSelected(menuitem, contextRecord)
+		{
+			iSite_EventViewMenuSelected(menuitem, contextRecord);
+		}
+		
+		function Radiology_EventExamMenuSelected(menuitem, examKey)
+		{
+			iSite_EventExamMenuSelected(menuitem, examKey);
+		}
+		
+		function Radiology_EventLogout(BautoLogoutFlg)
+		{
+			iSite_EventLogout();
+		}
+		
+		function iSiteEnterprise_EventLogout(BautoLogoutFlg)
+		{
+			iSite_EventLogout();
+		}
+		
+		function iSite_EventLogout() 
+		{
+			if (awRunning) 
+			{
+				ACCMDTest1.InputParameter = soloPath + " -apiVersion=2.0 -exit";
+				ACCMDTest1.LoadParameter();
+			}
+		}
+		
+		function iSite_EventViewMenuSelected(menuitem, contextRecord) 
+		{
+			OnViewEvent(menuitem, contextRecord);
+		}
+		
+		function iSite_EventExamMenuSelected(menuitem, examKey) 
+		{
+			OnViewEvent(menuitem, examKey);
+		}
+		
+		</SCRIPT>
+
+	</HEAD>
+	<BODY onload="OnLoad()" onunload="unLoad()">
+	
+	<OBJECT id="xmldso" height=0 width=0 
+classid=clsid:550dda30-0541-11d2-9ca9-0060b0ec3d39></OBJECT>
+	
+	<OBJECT ID="ACCMDTest1" WIDTH=0 HEIGHT=0
+	 CLASSID="CLSID:2D4B3E76-53BF-40D2-94C2-D511F4198F99">
+		<PARAM NAME="_Version" VALUE="65536">
+		<PARAM NAME="_ExtentX" VALUE="2646">
+		<PARAM NAME="_ExtentY" VALUE="1323">
+		<PARAM NAME="_StockProps" VALUE="0">
+	</OBJECT>
+	   
+	<SCRIPT FOR=ACCMDTest1 EVENT=ParameterLoaded()>
+	</SCRIPT>
+		
+	</BODY>
+</HTML>
