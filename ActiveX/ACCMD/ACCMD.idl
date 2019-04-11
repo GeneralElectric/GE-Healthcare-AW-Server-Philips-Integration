@@ -1,0 +1,50 @@
+// ACCMD.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (ACCMD.tlb) that will become a resource in
+// ACCMD.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(272e832c-464a-4583-bbf6-4e291339aa00), version(1.0),
+  control ]
+library ACCMDLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CACCMDCtrl
+	[ 
+		uuid(5688e6be-aa13-4938-93ca-2bf5275d2963)
+	]
+	dispinterface _DACCMD
+	{
+		properties:
+		methods:
+			[id(1), helpstring("Call a batch command")] int CallBatch(BSTR);
+	};
+
+	//  Event dispatch interface for CACCMDCtrl
+
+	[ 
+		uuid(4dd6e309-ae91-4b6b-9b97-2cc0beab8ccb)
+	]
+	dispinterface _DACCMDEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+	};
+
+	//  Class information for CACCMDCtrl
+	[
+		uuid(dfd50ebd-377f-481b-bfad-9f652f1f10d1)
+	]
+	coclass ACCMD
+	{
+		[default] dispinterface _DACCMD;
+		[default, source] dispinterface _DACCMDEvents;
+	};
+
+};

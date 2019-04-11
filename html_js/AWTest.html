@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Copyright 2018 General Electric
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -15,12 +15,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 	<HEAD>
 		<TITLE>AW Test Plug-In</TITLE>
 		<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
-		
+
 		<!--SCRIPT src="iSiteConfig.js" ></SCRIPT-->
 		<SCRIPT language="javascript" src="AWPrefs.js"></SCRIPT>
 		<SCRIPT language="javascript">
-		
-		
+
+
 		var bInitialized = 0;
 		var awRunning = false;
 		var vMenu = "Start AW";
@@ -28,7 +28,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 		var iSite;
 		var PREFS_FILE = "awprefs.htm";
 		var PREFS_NAME = "AW Preferences";
-		
+
 		//Create an error handler to assist in debugging.
 		function HandleError(msg, url, lno)
 		{
@@ -39,64 +39,57 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 			alert(errMsg);
 			return;
 		}
-		
+
 		function Init()
-		{			
-			 if (typeof(iSiteEnterprise) == "object") 
+		{
+			 if (typeof(iSiteEnterprise) == "object")
 			 {
 				iSite = iSiteEnterprise;
-			 } 
-			 else if (typeof(Radiology) == "object") 
+			 }
+			 else if (typeof(Radiology) == "object")
 			 {
 				iSite = Radiology;
-			 } 
-			 else 
+			 }
+			 else
 			 {
 				iSite = NotDefined;
 			 }
 		}
-				
+
 		function callCtrl(vStudyUID, vSeriesUID)
 		{
-			GetPreferences();	
-		
+			GetPreferences();
+
 			// Philips DICOM
-			ACCMDTest1.InputParameter = soloPath + 
-			" -apiVersion=" + apiVersion + " -awServerIP=" + awServerIp + " -user=" + user + " -secure=" + secure + 
-			" -selectedStudy=" + vStudyUID + " -selectedSeries=" + 
-			vSeriesUID + " -uniqueID=1" + " -loginlaunch";
-			
-			// Test DICOM
-			//ACCMDTest1.InputParameter = soloPath + 
-			//" -apiVersion=" + apiVersion + " -awServerIP=" + awServerIp + " -user=" + user + " -secure=" + secure + 
-			//" -selectedStudy=" + "1.2.840.113619.2.248.90580923803.8632.1211555749674.2" + " -selectedSeries=" + 
-			//"1.2.840.113619.2.248.90580923803.8632.1211555749674.3" + " -uniqueID=1" + " -loginlaunch";
-			
-			ACCMDTest1.LoadParameter();
+			ACCMD1.CallBatch( "cmd /k \"" + soloPath + "\"" +
+			" -apiVersion=" + apiVersion + " -awServerIP=" + awServerIp + " -user=" + user + " -secure=" + secure +
+			" -selectedStudy=" + vStudyUID + " -selectedSeries=" +
+			vSeriesUID + " -uniqueID=1" + " -loginlaunch" );
+
 			awRunning = true;
 		}
 
 		function OnLoad()
 		{
-			// Init 
+			// Init
 			Init();
-			
+
 			// Add menu items
 			iSite.AddViewMenuItem(vMenu);
 			iSite.AddExamMenuItem(eMenu);
-			
+
 			AddPrefPage();
 		}
-		
-		function unLoad() 
+
+		function unLoad()
 		{
 			iSite.RemoveViewMenuItem(vMenu);
 			iSite.RemoveExamMenuItem(eMenu);
 			iSite.AddPreferencePage(PREFS_NAME, "", "Machine");
 		}
-		
+
 		function AddPrefPage()
-		{			
+		{
 			// use the prefs file located in this same location
 			var thispath = document.location.toString();
 			thispath = thispath.toLowerCase();
@@ -112,12 +105,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 				window.alert("Pref error");
 			}
 		}
-		
-		// This function is called by the javascript that traps the event for the 
+
+		// This function is called by the javascript that traps the event for the
 		// image view menu item selection.
 		function OnViewEvent(menuitem, ContextRecord)
 		{
-			if (menuitem == eMenu || menuitem == vMenu) 
+			if (menuitem == eMenu || menuitem == vMenu)
 			{
 				if (ContextRecord != "")
 				{
@@ -126,7 +119,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 					var nodeList = doc.getElementsByTagName("WindowInfo");
 					var WndID    = nodeList.item(0).selectSingleNode("WindowID").text;
-			
+
 					var WndInfo = iSite.GetStaticWindowInfo(WndID);
 
 					if (WndInfo != "")
@@ -136,81 +129,77 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 						var nodeList = doc.getElementsByTagName("Window");
 						var vStudyUID = nodeList.item(0).getElementsByTagName("StudyUID").item(0).text;
 						var vSeriesUID = nodeList.item(0).getElementsByTagName("SeriesUID").item(0).text;
-						
+
 						callCtrl(vStudyUID, vSeriesUID);
 					}
-				
+
 				}
 			}
 		}
-		
+
 		function iSiteEnterprise_EventViewMenuSelected(menuitem, contextRecord)
 		{
 			iSite_EventViewMenuSelected(menuitem, contextRecord);
 		}
-		
+
 		function iSiteEnterprise_EventExamMenuSelected(menuitem, examKey)
 		{
 			iSite_EventExamMenuSelected(menuitem, examKey);
 		}
-		
+
 		function Radiology_EventViewMenuSelected(menuitem, contextRecord)
 		{
 			iSite_EventViewMenuSelected(menuitem, contextRecord);
 		}
-		
+
 		function Radiology_EventExamMenuSelected(menuitem, examKey)
 		{
 			iSite_EventExamMenuSelected(menuitem, examKey);
 		}
-		
+
 		function Radiology_EventLogout(BautoLogoutFlg)
 		{
 			iSite_EventLogout();
 		}
-		
+
 		function iSiteEnterprise_EventLogout(BautoLogoutFlg)
 		{
 			iSite_EventLogout();
 		}
-		
-		function iSite_EventLogout() 
+
+		function iSite_EventLogout()
 		{
-			if (awRunning) 
+			if (awRunning)
 			{
-				ACCMDTest1.InputParameter = soloPath + " -apiVersion=2.0 -exit";
-				ACCMDTest1.LoadParameter();
+				ACCMD1.CallBatch(soloPath + " -apiVersion=2.0 -exit");
 			}
 		}
-		
-		function iSite_EventViewMenuSelected(menuitem, contextRecord) 
+
+		function iSite_EventViewMenuSelected(menuitem, contextRecord)
 		{
 			OnViewEvent(menuitem, contextRecord);
 		}
-		
-		function iSite_EventExamMenuSelected(menuitem, examKey) 
+
+		function iSite_EventExamMenuSelected(menuitem, examKey)
 		{
 			OnViewEvent(menuitem, examKey);
 		}
-		
+
 		</SCRIPT>
 
 	</HEAD>
 	<BODY onload="OnLoad()" onunload="unLoad()">
-	
-	<OBJECT id="xmldso" height=0 width=0 
+
+	<OBJECT id="xmldso" height=0 width=0
 classid=clsid:550dda30-0541-11d2-9ca9-0060b0ec3d39></OBJECT>
-	
-	<OBJECT ID="ACCMDTest1" WIDTH=0 HEIGHT=0
-	 CLASSID="CLSID:2D4B3E76-53BF-40D2-94C2-D511F4198F99">
+
+	<OBJECT ID="ACCMD1" WIDTH=0 HEIGHT=0
+	 CLASSID="CLSID:DFD50EBD-377F-481B-BFAD-9F652F1F10D1">
 		<PARAM NAME="_Version" VALUE="65536">
 		<PARAM NAME="_ExtentX" VALUE="2646">
 		<PARAM NAME="_ExtentY" VALUE="1323">
 		<PARAM NAME="_StockProps" VALUE="0">
 	</OBJECT>
-	   
-	<SCRIPT FOR=ACCMDTest1 EVENT=ParameterLoaded()>
-	</SCRIPT>
-		
+
 	</BODY>
 </HTML>

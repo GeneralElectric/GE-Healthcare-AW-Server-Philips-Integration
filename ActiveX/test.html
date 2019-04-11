@@ -1,0 +1,22 @@
+<HTML>
+	<HEAD>
+		<TITLE>TestPage for ACCMD</TITLE>
+		<META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		<SCRIPT language="javascript">
+		function test() {
+		  ACCMD1.CallBatch("cmd /k echo Hello, World!");
+		}
+		</SCRIPT>
+	</HEAD>
+	<BODY>
+	<OBJECT ID="ACCMD1" WIDTH=0 HEIGHT=0
+ CLASSID="CLSID:DFD50EBD-377F-481B-BFAD-9F652F1F10D1">
+    <PARAM NAME="_Version" VALUE="65536">
+    <PARAM NAME="_ExtentX" VALUE="2646">
+    <PARAM NAME="_ExtentY" VALUE="1323">
+    <PARAM NAME="_StockProps" VALUE="0">
+</OBJECT>
+	<button onclick=test()>Test ACCMD.CallBatch()</button>
+	<p></p>
+	</BODY>
+</HTML>

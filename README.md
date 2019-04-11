@@ -9,20 +9,20 @@ Philips iSite Enterprise uses a web-based client application. AW Server starts f
 ## Design
 The iSite Enterprise application supports plug-ins in HTML format. The plug-in HTML page contains JavaScript code and an ActiveX control.
 
-The plug-in loads when the user logs in the iSite Enterprise application. There are two different HTML pages for the plug-in. An HTML which contains the code of the plug-in and a Preferences HTML page which contains argument values for the plug-in command line calls. 
+The plug-in loads when the user logs in the iSite Enterprise application. There are two different HTML pages for the plug-in. An HTML which contains the code of the plug-in and a Preferences HTML page which contains argument values for the plug-in command line calls.
 
-The plug-in creates a menu item on the DICOM exam view item. With a right mouse button click the Start AW command can be executed and the AW Server starts with the parameters of the DICOM file. 
+The plug-in creates a menu item on the DICOM exam view item. With a right mouse button click the Start AW command can be executed and the AW Server starts with the parameters of the DICOM file.
 
 When the user logs out from the iSite Enterprise application, the plug-in automatically logs out the user from the AW Server if the AW Server application was started during the session.
 
 
 ## iSite AW Server Plug-in architecture
- 
+
 **ActiveX Control**
 
 An MFC ActiveX Control written in Visual C++. The aim of this application is to call command line commands from an HTML file.
 
-It has one textual input parameter, which will contain the command line script what is created in the HTML at run-time. 
+It has one textual input parameter, which will contain the command line script what is created in the HTML at run-time.
 
 The execution of the of the command can be called with the single method of the Control. The Control creates a new process for the command line call. The call of method of the Control generates an event, so the HTML can handle it if it needs to.   
 
@@ -34,12 +34,13 @@ This Page does not have UI elements. It loads when the user logs in the iSite En
 
 The Preferences Page is accessible in the Preferences Window, Machine Preferences menu. The command line argument values can be defined here. It can be saved by clicking the Save Configuration button.
 
-The iSite Enterprise application uses an XML object to save and read the information. This XML source is available in HTML pages with declaring the "xmldso" object element. 
+The iSite Enterprise application uses an XML object to save and read the information. This XML source is available in HTML pages with declaring the "xmldso" object element.
 
 ## Install
 1. Unzip the Plug-in
-2. Run RegisterOcx.bat with administrator privileges, click OK when finished
-3. Check user section data in iSiteconfig.js 
+2. Get the right MSI installer from ActiveX/bin and run as Administrator
+3. Open Internet Explorer/Internet Options/Security/Custom level... and allow "Initialize and script ActiveX controls not marked as safe for scripting" for local intranet.
+4. Check user section data in iSiteconfig.js
 
 ## Configure
 1. Login to Philips iSite Enterprise
@@ -57,4 +58,4 @@ The iSite Enterprise application uses an XML object to save and read the informa
 
 
 ## Note
-- The iSite application uses Internet Explorer internet settings. Enable activeX in Internet Explorer. Help: https://support.microsoft.com/en-ie/help/17469/windows-internet-explorer-use-activex-controls
+- The iSite application uses Internet Explorer internet settings. Enable ActiveX in Internet Explorer. Help: https://support.microsoft.com/en-ie/help/17469/windows-internet-explorer-use-activex-controls
