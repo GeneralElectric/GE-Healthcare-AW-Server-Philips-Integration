@@ -53,4 +53,4 @@ The iSite Enterprise application uses an XML object to save and read the informa
 
 
 ## Note
-The iSite application uses Internet Explorer internet settings. Enable activeX in Internet Explorer. Help: https://support.microsoft.com/en-ie/help/17469/windows-internet-explorer-use-activex-controls
+- The iSite application uses Internet Explorer internet settings. Enable activeX in Internet Explorer. Help: https://support.microsoft.com/en-ie/help/17469/windows-internet-explorer-use-activex-controls
