@@ -1,9 +1,10 @@
 # GE-Healthcare-AW-Server-Philips-Integration
 
-**This document provides the instructions to integrate Philips iSite and AW Server. The project folders contain the html code and registry of ActiveX. The customer is responsible for implementing the integration in their environment with guidance from GE. Installation and Configuration are shown in this README.md and the corresponding readme.txt files in each folder.
+**This document provides the instructions to integrate Philips iSite and AW Server. The project folders contain the html code and registry of ActiveX. The customer is responsible for implementing the integration in their environment with guidance from GE. Installation and Configuration are shown in this README.md and the corresponding readme.txt files in each folder.**
+
 Integration will require registering of ActiveX, determining location of executable source code, launching of the patient context, and authentication of end users. The AW Server PACS Integration Guide can be acquired from GE to support users with implementation for integrating a command line-based interface to launch AW Server applications with selected datasets.
 
-**Philips iSite Enterprise uses a web-based client application. AW Server starts from command line. To integrate the launch of AW Server from the iSite application it needs a Plug-in.**
+Philips iSite Enterprise uses a web-based client application. AW Server starts from command line. To integrate the launch of AW Server from the iSite application it needs a Plug-in.
 
 ## Design
 The iSite Enterprise application supports plug-ins in HTML format. The plug-in HTML page contains JavaScript code and an ActiveX control.
